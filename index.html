@@ -3,9 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <title>CDW Canada Org Directory</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
@@ -1118,21 +1115,17 @@ async function loadData() {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     DATA = await res.json();
     populateFilters();
-    const ls = document.getElementById('loading-screen');
-    const shell = document.getElementById('app-shell');
-    if (ls) ls.style.display = 'none';
-    if (shell) shell.style.display = '';
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('app-shell').style.display = '';
     render();
     document.getElementById('header-meta').textContent = 'February 2026 · ' + DATA.length.toLocaleString() + ' coworkers';
   } catch(err) {
-    const ls = document.getElementById('loading-screen');
-    if (ls) ls.innerHTML = \`
-      <div style="text-align:center;padding:80px 20px;color:var(--muted)">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:16px;opacity:.4"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <p style="font-size:15px;margin-bottom:8px">Could not load canada_data.json</p>
-        <p style="font-size:12px;font-family:'DM Mono',monospace;color:#DEA193">\${err.message}</p>
-        <p style="font-size:11px;margin-top:8px;color:var(--muted)">Place canada_data.json in the same folder as this HTML file.</p>
-      </div>\`;
+    document.getElementById('loading-screen').innerHTML =
+      '<div style="text-align:center;padding:80px 20px;color:var(--muted)">' +
+      '<p style="font-size:15px;margin-bottom:8px">Could not load canada_data.json</p>' +
+      '<p style="font-size:12px;font-family:DM Mono,monospace;color:#DEA193">' + err.message + '</p>' +
+      '<p style="font-size:11px;margin-top:8px;color:var(--muted)">Ensure canada_data.json is in the same directory.</p>' +
+      '</div>';
   }
 }
 
