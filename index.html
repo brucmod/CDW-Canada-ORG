@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>CDW Canada Org Directory</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
@@ -54,8 +57,6 @@
 
   /* LAYOUT */
   #app { padding: 28px 40px; }
-  #app.map-mode { padding: 0; height: calc(100vh - 130px); display: flex; flex-direction: column; }
-  #app.map-mode .map-shell { flex: 1; height: auto; min-height: 0; border-radius: 0; border: none; border-top: 1px solid var(--border); }
 
   /* TABLE */
   .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border); border-radius: 10px; }
@@ -602,7 +603,6 @@ function render() {
   const filtered = getFiltered();
   document.getElementById('count').textContent = filtered.length.toLocaleString();
   const app = document.getElementById('app');
-  app.classList.toggle('map-mode', currentView === 'map');
   if (currentView === 'map') { renderMap(filtered); return; }
   if (!filtered.length) {
     app.innerHTML = `<div class="empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>No results found</p></div>`;
@@ -763,8 +763,6 @@ function renderMap(filteredData) {
   buildProvStats(filteredData);
   buildLegend();
   refreshPanelList(filteredData);
-  // Force Leaflet to recalculate size after DOM paint
-  setTimeout(() => { if (leafletMap) leafletMap.invalidateSize(); }, 100);
 
   document.getElementById('panel-search').addEventListener('input', e => {
     mapPanelQuery = e.target.value;
@@ -1116,7 +1114,7 @@ document.getElementById('clear-filters').addEventListener('click', () => {
 // ═══════════════════════════════════════
 async function loadData() {
   try {
-    const res = await fetch('canada_data.json');
+    const res = await fetch('canada_data.json?v=' + Date.now(), { cache: 'no-store' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     DATA = await res.json();
     populateFilters();
