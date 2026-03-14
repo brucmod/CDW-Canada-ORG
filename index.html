@@ -54,6 +54,8 @@
 
   /* LAYOUT */
   #app { padding: 28px 40px; }
+  #app.map-mode { padding: 0; height: calc(100vh - 130px); display: flex; flex-direction: column; }
+  #app.map-mode .map-shell { flex: 1; height: auto; min-height: 0; border-radius: 0; border: none; border-top: 1px solid var(--border); }
 
   /* TABLE */
   .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border); border-radius: 10px; }
@@ -600,6 +602,7 @@ function render() {
   const filtered = getFiltered();
   document.getElementById('count').textContent = filtered.length.toLocaleString();
   const app = document.getElementById('app');
+  app.classList.toggle('map-mode', currentView === 'map');
   if (currentView === 'map') { renderMap(filtered); return; }
   if (!filtered.length) {
     app.innerHTML = `<div class="empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>No results found</p></div>`;
@@ -760,6 +763,8 @@ function renderMap(filteredData) {
   buildProvStats(filteredData);
   buildLegend();
   refreshPanelList(filteredData);
+  // Force Leaflet to recalculate size after DOM paint
+  setTimeout(() => { if (leafletMap) leafletMap.invalidateSize(); }, 100);
 
   document.getElementById('panel-search').addEventListener('input', e => {
     mapPanelQuery = e.target.value;
